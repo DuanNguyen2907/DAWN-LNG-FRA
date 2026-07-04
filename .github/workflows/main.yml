@@ -1,0 +1,68 @@
+name: Build desktop installers (Windows + macOS)
+
+# Cách dùng:
+# 1. Đẩy code này lên một repository GitHub (miễn phí).
+# 2. Vào tab "Actions" của repo trên GitHub, chọn workflow "Build desktop
+#    installers (Windows + macOS)", bấm "Run workflow" để chạy tay — hoặc để
+#    tự chạy mỗi khi bạn đẩy một tag dạng "v1.0.0" (xem phần "on" bên dưới).
+# 3. Chờ khoảng 5-10 phút, vào lại trang chạy đó, mục "Artifacts" ở cuối
+#    trang sẽ có 2 file: "windows-installer" và "mac-installer" — tải về là
+#    xong, không cần máy Mac thật.
+#
+# Vì sao cần làm thế này: electron-builder không thể tạo file .dmg (cài đặt
+# macOS) từ máy Windows — đây là giới hạn của chính công cụ đóng gói macOS
+# (cần chạy trên hệ điều hành macOS thật). GitHub cấp máy ảo macOS miễn phí
+# (2000 phút/tháng cho repo public) để giải quyết đúng vấn đề này.
+
+on:
+  workflow_dispatch: # cho phép bấm nút "Run workflow" chạy tay trên GitHub
+  push:
+    tags:
+      - "v*" # tự động chạy khi bạn đẩy tag như v1.0.0, v1.1.0...
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Lấy code từ repo
+        uses: actions/checkout@v4
+
+      - name: Cài Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cài dependencies
+        run: npm install
+
+      - name: Build file cài đặt (electron-builder tự nhận diện hệ điều hành đang chạy)
+        run: npm run dist
+        env:
+          # Tắt yêu cầu ký code trên macOS — vì chưa có Apple Developer
+          # certificate. App vẫn cài/chạy được bình thường, chỉ macOS sẽ cảnh
+          # báo "không xác định được nhà phát triển" khi mở lần đầu (người
+          # dùng bấm chuột phải > Open để bỏ qua cảnh báo này một lần).
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Tải kết quả lên (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: |
+            dist/*.exe
+          if-no-files-found: warn
+
+      - name: Tải kết quả lên (macOS)
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-installer
+          path: |
+            dist/*.dmg
+            dist/*.zip
+          if-no-files-found: warn
