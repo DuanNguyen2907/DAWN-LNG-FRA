@@ -93,6 +93,13 @@ ký, không phải lỗi.
 **Lựa chọn khác** nếu không muốn dùng GitHub Actions: thuê máy Mac từ xa
 (MacinCloud, MacStadium) rồi chạy `npm run dist` trực tiếp trên đó.
 
+**Nếu gặp lỗi "GitHub Personal Access Token is not set"**: electron-builder
+mặc định cố tạo GitHub Release khi phát hiện đang chạy trong CI. Cấu hình
+`"publish": null` trong `package.json` đã tắt việc này — bạn chỉ cần tải file
+ở mục Artifacts như hướng dẫn trên, không cần token gì cả. Nếu sau này muốn
+tự động đăng release lên GitHub kèm file cài đặt, mới cần tạo secret
+`GH_TOKEN` trong repo Settings → Secrets.
+
 ### Thêm icon riêng cho app (tuỳ chọn)
 
 Hiện app dùng icon mặc định của Electron. Muốn đổi: tạo thư mục `build/` ở
