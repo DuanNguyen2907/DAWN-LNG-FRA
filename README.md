@@ -137,6 +137,21 @@ là "lõi" để học có định hướng (Thẻ từ, Đố vui, Nối từ, 
 đều dùng bộ này); mục Khám phá là để mở rộng thêm khi bạn đã học hết phần lõi
 hoặc muốn tìm từ theo chủ đề cụ thể không có sẵn.
 
+## Đợt nâng cấp lớn: 9 cải tiến mới (Ôn tập thông minh, Dictée, Hội thoại...)
+
+**Tính năng học tập mới:**
+- **🎯 Ôn tập thông minh**: gộp từ đến hạn ôn (SRS) + từ hay sai ở Đố vui/Nối từ/Gõ nhanh + vài từ mới thành MỘT phiên ôn ưu tiên duy nhất mỗi ngày, thay vì phải tự chọn từng game riêng lẻ.
+- **🎧 Dictée (nghe chép chính tả)**: nghe câu tiếng Pháp thật, gõ lại, chấm theo từng từ — kỹ năng nghe thật sự, khác với "nghe rồi chọn đáp án" ở Đố vui.
+- **💬 Hội thoại tình huống**: 3 kịch bản phân nhánh (gọi món ở quán cà phê, hỏi đường, làm quen) — nội dung viết tay để đảm bảo tiếng Pháp tự nhiên, không lấy qua API.
+- **🔬 Phân tích câu** *(phạm vi có giới hạn CÓ CHỦ ĐÍCH)*: nhận diện chủ ngữ/động từ (kèm thì + ngôi)/mạo từ/danh từ/tính từ trong câu — nhưng CHỈ với từ có trong dữ liệu đã kiểm chứng của app. Mình không xây một bộ phân tích ngữ pháp tiếng Pháp tổng quát vì đó là bài toán NLP khó, không thể đảm bảo đúng nếu tự viết — thà giới hạn phạm vi rõ ràng còn hơn đưa ra phân tích sai mà không biết.
+- **📰 Đọc hiểu**: trích đoạn văn xuôi thật từ Wikipedia tiếng Pháp (không dùng thơ/ngụ ngôn dù public domain, vì nguyên tắc không tái tạo tác phẩm nghệ thuật dưới mọi hình thức), bấm vào từng từ để tra nghĩa ngay khi đọc, kèm bản dịch tự động.
+- **Mở rộng bài tập ngữ pháp**: thêm bài hợp giống/số tính từ và chọn mạo từ đúng (cần bổ sung dữ liệu giống đực/cái cho một số danh từ — xem `adjectiveAgreementData.js`).
+
+**Hạ tầng & trải nghiệm:**
+- **Hiệu năng**: main process trước đây đọc/ghi đĩa đồng bộ ở MỌI thao tác lưu trữ — có thể gây giật nhẹ khi nhiều từ được dịch liên tiếp. Giờ giữ dữ liệu trong bộ nhớ, ghi đĩa gộp lại (debounce 400ms), không mất dữ liệu khi thoát app.
+- **Giao diện Sáng/Tối + cỡ chữ tuỳ chỉnh**: đổi trong Cài đặt, áp dụng ngay lập tức.
+- **Command Palette (Ctrl+K)**: tìm kiếm xuyên suốt toàn app — mục điều hướng, từ vựng, chủ điểm ngữ pháp, động từ, chủ đề khám phá.
+
 ## Tính năng
 
 **Học từ vựng:**

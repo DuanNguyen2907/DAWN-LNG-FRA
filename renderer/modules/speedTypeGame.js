@@ -146,6 +146,10 @@ window.SpeedTypeGame = (function () {
         feedback.innerHTML = `Chưa đúng — đáp án: <b>${word.fr}</b>`;
         feedback.className = "quiz-feedback feedback-bad";
         SoundFX.wrong();
+        Store.get("weakWords", {}).then((store) => {
+          const existing = store[word.id] || { count: 0 };
+          Store.mergeNested("weakWords", word.id, { count: existing.count + 1, lastWrong: Date.now() });
+        });
       }
       const scoreEl = container.querySelector("#sp-score");
       const streakEl = container.querySelector("#sp-streak");

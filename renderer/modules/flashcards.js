@@ -25,8 +25,9 @@ window.FlashcardsGame = (function () {
     return a;
   }
 
-  async function render(container) {
-    state = { pool: await buildPool(state.level), index: 0, flipped: false, sessionCount: 0, level: state.level, cache: {} };
+  async function render(container, customPool) {
+    const pool = customPool || (await buildPool(state.level));
+    state = { pool, index: 0, flipped: false, sessionCount: 0, level: state.level, cache: {} };
     container.innerHTML = `
       <div class="game-header">
         <h2>🃏 Thẻ từ vựng</h2>

@@ -6,7 +6,7 @@
 // "đọc thêm", không fetch nội dung từ đó nữa.
 window.GRAMMAR_TOPICS = [
   {
-    slug: "articles", label: "Mạo từ (le, la, un, une...)", level: "A1", exerciseType: null,
+    slug: "articles", label: "Mạo từ (le, la, un, une...)", level: "A1", exerciseType: "article",
     wikiTitle: "Déterminants et articles en français",
     intro: "Danh từ tiếng Pháp luôn đi kèm mạo từ, và mạo từ phải hợp giống (đực/cái) và hợp số (ít/nhiều) với danh từ.",
     rules: [
@@ -88,7 +88,7 @@ window.GRAMMAR_TOPICS = [
     tip: "Cứ nghĩ 'quatre-vingt' = 4×20 = 80 như một phép tính, rồi cộng thêm phần lẻ phía sau.",
   },
   {
-    slug: "adjectif-accord", label: "Tính từ - hợp giống, hợp số", level: "A2", exerciseType: null,
+    slug: "adjectif-accord", label: "Tính từ - hợp giống, hợp số", level: "A2", exerciseType: "adjective-agreement",
     wikiTitle: "Morphologie de l'adjectif en français",
     intro: "Tính từ tiếng Pháp phải hợp giống và hợp số với danh từ mà nó bổ nghĩa.",
     rules: [

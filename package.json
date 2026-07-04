@@ -30,7 +30,11 @@
     "publish": null,
     "mac": {
       "category": "public.app-category.education",
-      "target": ["dmg", "zip"]
+      "target": ["dmg", "zip"],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "win": {
       "target": ["nsis"]

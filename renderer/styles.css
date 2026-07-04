@@ -26,6 +26,37 @@
   --shadow: 0 8px 24px rgba(20, 33, 61, 0.35);
 }
 
+/* ===== Giao diện Sáng (light theme) =====
+   Vì toàn bộ stylesheet dùng biến (--ink, --chalk...) thay vì mã màu cứng,
+   chỉ cần định nghĩa lại đúng các biến này là toàn bộ giao diện tự đổi theo,
+   không cần sửa từng dòng CSS riêng lẻ. */
+[data-theme="light"] {
+  --ink: #F7F3E9;
+  --ink-soft: #FFFFFF;
+  --ink-softer: #E8E1D0;
+  --chalk: #1E2A3F;
+  --chalk-dim: #5B6472;
+  --gold: #B8860B;
+  --teal: #1F7A6E;
+  --coral: #C6503A;
+  --slate: #78808F;
+  --white: #14213D;
+  --shadow: 0 8px 24px rgba(30, 42, 63, 0.12);
+}
+/* Vài chỗ dùng rgba() cố định thay vì biến (nền mờ cho badge/huy hiệu) —
+   trên nền sáng độ tương phản sẽ thấp hơn nếu giữ nguyên, tăng nhẹ độ đậm. */
+[data-theme="light"] .badge,
+[data-theme="light"] .mastery-new,
+[data-theme="light"] .mastery-low,
+[data-theme="light"] .mastery-mid,
+[data-theme="light"] .mastery-high,
+[data-theme="light"] .toast-icon {
+  filter: saturate(1.3);
+}
+[data-theme="light"] .flashcard-front {
+  border-color: rgba(184, 134, 11, 0.35);
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -36,6 +67,7 @@ html, body {
   color: var(--chalk);
   font-family: var(--font-body);
   overflow: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 ::selection { background: var(--gold); color: var(--ink); }
@@ -673,6 +705,12 @@ html, body {
 }
 .xp-label { font-family: var(--font-mono); font-size: 11.5px; color: var(--chalk-dim); flex-shrink: 0; }
 .xp-title { margin-top: 8px; font-size: 13px; color: var(--gold); font-style: italic; }
+.sr-hero-cta { margin-top: 18px; }
+.smart-review-breakdown { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.sr-chip { font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background: var(--ink-soft); border: 1px solid var(--ink-softer); }
+.sr-chip-due { border-color: rgba(231,111,81,0.4); }
+.sr-chip-weak { border-color: rgba(255,201,60,0.4); }
+.sr-chip-new { border-color: rgba(42,157,143,0.4); }
 
 /* ===== Onboarding overlay ===== */
 .onboarding-overlay {
@@ -741,6 +779,90 @@ html, body {
 }
 .speedtype-meaning { font-family: var(--font-display); font-weight: 800; font-size: 30px; text-align: center; margin-bottom: 20px; }
 
+/* ===== Dictée ===== */
+.dictee-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 80px;
+  margin: 16px 0;
+  resize: vertical;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.dictee-feedback { margin-top: 16px; }
+.dictee-correct-sentence { margin-top: 10px; line-height: 2; font-size: 15px; }
+.dictee-word { padding: 2px 4px; border-radius: 4px; margin: 0 1px; }
+.dictee-word-ok { background: rgba(42,157,143,0.2); color: var(--teal); }
+.dictee-word-bad { background: rgba(231,111,81,0.2); color: var(--coral); text-decoration: line-through; }
+
+/* ===== Dialogue scenarios ===== */
+.dialogue-scenario-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.dialogue-card { max-width: 600px; }
+.dialogue-history { display: flex; flex-direction: column; gap: 16px; max-height: 340px; overflow-y: auto; margin-bottom: 20px; }
+.dialogue-line { padding-bottom: 14px; border-bottom: 1px dashed var(--ink-softer); }
+.dialogue-line:last-child { border-bottom: none; padding-bottom: 0; }
+.dialogue-speaker { font-family: var(--font-display); font-weight: 800; font-size: 13px; color: var(--gold); margin-bottom: 4px; }
+.dialogue-text { font-size: 15.5px; font-weight: 600; }
+.dialogue-translation { font-size: 13px; color: var(--chalk-dim); margin-top: 2px; font-style: italic; }
+.dialogue-choices { display: flex; flex-direction: column; gap: 10px; }
+.dialogue-choice-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  background: var(--ink-softer);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  text-align: left;
+}
+.dialogue-choice-btn:hover { border-color: var(--gold); }
+.dialogue-choice-fr { font-weight: 700; font-size: 14.5px; color: var(--chalk); }
+.dialogue-choice-vi { font-size: 12.5px; color: var(--slate); }
+.dialogue-ending {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 16px;
+  padding: 14px;
+  background: rgba(42,157,143,0.1);
+  border-radius: 10px;
+}
+
+/* ===== Sentence Analyzer ===== */
+.sa-input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.sa-input { flex: 1; max-width: 500px; }
+.sa-examples { margin-top: 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sa-example-chip { font-size: 12px; padding: 6px 12px; }
+.sa-sentence-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.sa-token { padding: 10px 14px; border-radius: 10px; text-align: center; border: 2px solid transparent; }
+.sa-token-word { font-weight: 700; font-size: 15px; }
+.sa-token-label { font-size: 10.5px; margin-top: 3px; opacity: 0.85; }
+.sa-tag-pronoun { background: rgba(255,201,60,0.18); border-color: rgba(255,201,60,0.4); }
+.sa-tag-verb { background: rgba(231,111,81,0.18); border-color: rgba(231,111,81,0.4); }
+.sa-tag-article { background: rgba(136,145,168,0.18); border-color: rgba(136,145,168,0.4); }
+.sa-tag-noun { background: rgba(42,157,143,0.18); border-color: rgba(42,157,143,0.4); }
+.sa-tag-adjective { background: rgba(100,149,237,0.18); border-color: rgba(100,149,237,0.4); }
+.sa-tag-negation { background: rgba(200,80,80,0.18); border-color: rgba(200,80,80,0.4); }
+.sa-tag-unknown { background: var(--ink-softer); opacity: 0.6; }
+.sa-details { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; color: var(--chalk-dim); }
+.sa-detail-row b { color: var(--chalk); }
+
+/* ===== Reading Practice ===== */
+.reading-original { line-height: 2; }
+.reading-word { cursor: pointer; border-radius: 3px; transition: background 0.1s ease; }
+.reading-word:hover { background: rgba(255,201,60,0.25); }
+.reading-word-lookup {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: var(--ink-softer);
+  border-radius: 8px;
+  font-size: 14px;
+  min-height: 20px;
+}
+
 /* ===== Card / row illustration images ===== */
 .fc-image { min-height: 0; margin-bottom: 6px; }
 .fc-image img { max-width: 140px; max-height: 100px; border-radius: 10px; object-fit: cover; }
@@ -780,6 +902,96 @@ html, body {
   color: var(--slate);
   opacity: 0.65;
   padding: 14px 24px 4px 68px;
+}
+
+.search-hint-btn {
+  margin: 0 24px 16px;
+  background: var(--ink-soft);
+  border: 1px solid var(--ink-softer);
+  color: var(--slate);
+  font-size: 12.5px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.search-hint-btn:hover { border-color: var(--gold); color: var(--chalk); }
+.search-hint-kbd {
+  font-family: var(--font-mono-safe);
+  font-size: 10px;
+  background: var(--ink-softer);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ===== Command Palette (Ctrl+K) ===== */
+.cmdk-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 16, 30, 0);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  z-index: 300;
+  pointer-events: none;
+  transition: background 0.15s ease;
+}
+.cmdk-overlay.cmdk-visible { background: rgba(10, 16, 30, 0.75); pointer-events: auto; }
+.cmdk-box {
+  background: var(--ink-soft);
+  border: 1px solid var(--ink-softer);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 560px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transform: translateY(-8px);
+  opacity: 0;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.cmdk-visible .cmdk-box { transform: translateY(0); opacity: 1; }
+.cmdk-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink-softer);
+  color: var(--chalk);
+  font-family: var(--font-body);
+  font-size: 16px;
+  padding: 18px 20px;
+  outline: none;
+}
+.cmdk-results { max-height: 360px; overflow-y: auto; padding: 8px; }
+.cmdk-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--chalk);
+}
+.cmdk-item.active { background: var(--ink-softer); }
+.cmdk-item-icon { font-size: 18px; flex-shrink: 0; }
+.cmdk-item-text { display: flex; flex-direction: column; }
+.cmdk-item-title { font-size: 14px; font-weight: 600; }
+.cmdk-item-sub { font-size: 11.5px; color: var(--slate); }
+.cmdk-empty { padding: 24px; text-align: center; color: var(--slate); font-size: 13.5px; }
+.cmdk-hint {
+  font-family: var(--font-mono-safe);
+  font-size: 10.5px;
+  color: var(--slate);
+  padding: 8px 20px;
+  border-top: 1px solid var(--ink-softer);
 }
 
 /* ===== Learned Words (Đã học) ===== */

@@ -1,6 +1,6 @@
 // Trang Cài đặt: mục tiêu học/ngày, bật/tắt âm thanh, xuất/nhập sao lưu, xoá tiến trình
 window.SettingsPage = (function () {
-  const BACKUP_KEYS = ["stats", "srsCards", "focusLog", "focusCycles", "vocabEnrichment", "vocabImages", "grammarUserNotes", "discoverVocabState", "wikibooksLessonCache", "settings"];
+  const BACKUP_KEYS = ["stats", "srsCards", "focusLog", "focusCycles", "vocabEnrichment", "vocabImages", "grammarUserNotes", "discoverVocabState", "wikibooksLessonCache", "weakWords", "readingTextCache", "settings"];
 
   function clamp(value, min, max, fallback) {
     const n = Number(value);
@@ -33,6 +33,26 @@ window.SettingsPage = (function () {
         <label class="settings-label">
           Thời lượng nghỉ (phút)
           <input type="number" min="1" max="30" id="st-break" class="text-input" value="${settings.focusBreakMinutes || 5}" />
+        </label>
+      </div>
+
+      <div class="settings-section">
+        <h3>Giao diện</h3>
+        <label class="settings-label">
+          Chủ đề màu
+          <select id="st-theme" class="level-select">
+            <option value="dark">🌙 Tối (mặc định)</option>
+            <option value="light">☀️ Sáng</option>
+          </select>
+        </label>
+        <label class="settings-label">
+          Cỡ chữ
+          <select id="st-fontsize" class="level-select">
+            <option value="90">Nhỏ</option>
+            <option value="100">Vừa (mặc định)</option>
+            <option value="115">Lớn</option>
+            <option value="130">Rất lớn</option>
+          </select>
         </label>
       </div>
 
@@ -72,6 +92,23 @@ window.SettingsPage = (function () {
     goalInput.addEventListener("blur", () => (goalInput.value = clamp(goalInput.value, 1, 240, 15)));
     workInput.addEventListener("blur", () => (workInput.value = clamp(workInput.value, 1, 90, 25)));
     breakInput.addEventListener("blur", () => (breakInput.value = clamp(breakInput.value, 1, 30, 5)));
+
+    // Giao diện & cỡ chữ: áp dụng ngay khi đổi, không cần bấm Lưu (giống các
+    // app khác xử lý cài đặt hiển thị — phản hồi tức thì để người dùng thấy
+    // ngay kết quả trước khi quyết định giữ hay không).
+    const themeSelect = container.querySelector("#st-theme");
+    const fontSelect = container.querySelector("#st-fontsize");
+    themeSelect.value = settings.theme || "dark";
+    fontSelect.value = String(settings.fontScale || 100);
+
+    themeSelect.addEventListener("change", async () => {
+      window.applyTheme(themeSelect.value);
+      await Store.merge("settings", { theme: themeSelect.value });
+    });
+    fontSelect.addEventListener("change", async () => {
+      window.applyFontScale(Number(fontSelect.value));
+      await Store.merge("settings", { fontScale: Number(fontSelect.value) });
+    });
 
     const saveBtn = container.querySelector("#st-save");
     saveBtn.addEventListener("click", async () => {

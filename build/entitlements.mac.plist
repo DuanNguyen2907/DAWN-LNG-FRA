@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Entitlements bắt buộc cho "hardened runtime" của macOS khi ký code + gửi
+  notarize. Đây là bộ quyền tiêu chuẩn cho app Electron (Chromium cần JIT và
+  vài quyền bộ nhớ đặc biệt để chạy). Không cần chỉnh sửa file này trừ khi
+  app cần thêm quyền đặc biệt (vd truy cập Camera, Microphone).
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+    <true/>
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+    <key>com.apple.security.network.client</key>
+    <true/>
+  </dict>
+</plist>

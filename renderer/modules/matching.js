@@ -129,7 +129,15 @@ window.MatchingGame = (function () {
       state.mistakes += 1;
       SoundFX.wrong();
       updateHeader(container);
+      bumpWeakWord(targetEl.dataset.id);
     }
+  }
+
+  async function bumpWeakWord(wordId) {
+    const numId = isNaN(wordId) ? wordId : Number(wordId);
+    const store = await Store.get("weakWords", {});
+    const existing = store[numId] || { count: 0 };
+    await Store.mergeNested("weakWords", numId, { count: existing.count + 1, lastWrong: Date.now() });
   }
 
   function updateHeader(container) {

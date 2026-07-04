@@ -44,5 +44,24 @@ window.ExternalSources = (function () {
     return page.extract || null;
   }
 
-  return { fetchWiktionaryCategoryMembers, fetchWikibooksLesson };
+  // ---- Wikipedia tiếng Pháp: lấy toàn văn (plain text) đoạn mở đầu bài viết ----
+  async function fetchWikipediaExtract(pageTitle) {
+    const params = new URLSearchParams({
+      action: "query",
+      prop: "extracts",
+      explaintext: "true",
+      titles: pageTitle,
+      format: "json",
+      origin: "*",
+    });
+    const res = await fetch(`https://fr.wikipedia.org/w/api.php?${params.toString()}`);
+    if (!res.ok) throw new Error("Lỗi Wikipedia");
+    const data = await res.json();
+    const pages = data.query?.pages || {};
+    const page = Object.values(pages)[0];
+    if (!page || page.missing !== undefined) return null;
+    return page.extract || null;
+  }
+
+  return { fetchWiktionaryCategoryMembers, fetchWikibooksLesson, fetchWikipediaExtract };
 })();

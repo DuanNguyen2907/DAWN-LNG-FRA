@@ -151,6 +151,7 @@ window.QuizGame = (function () {
           feedback.textContent = `Sai rồi! Đáp án đúng: ${correctMeaning}`;
           feedback.className = "quiz-feedback feedback-bad";
           SoundFX.wrong();
+          bumpWeakWord(correct.id);
         }
         updateBars(container);
         state.round += 1;
@@ -169,6 +170,12 @@ window.QuizGame = (function () {
     if (scoreEl) scoreEl.textContent = state.score;
     if (streakEl) streakEl.textContent = state.streak;
     if (roundEl) roundEl.textContent = Math.min(state.round, state.totalRounds);
+  }
+
+  async function bumpWeakWord(wordId) {
+    const store = await Store.get("weakWords", {});
+    const existing = store[wordId] || { count: 0 };
+    await Store.mergeNested("weakWords", wordId, { count: existing.count + 1, lastWrong: Date.now() });
   }
 
   async function bumpStats(isCorrect) {

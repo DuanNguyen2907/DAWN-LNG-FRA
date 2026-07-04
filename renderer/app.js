@@ -3,14 +3,19 @@
   // UI/UX: với 12 mục điều hướng, để rời rạc sẽ khó quét mắt tìm — nhóm lại
   // theo chủ đề (giống cách sắp mục lục sách) để dễ định vị hơn.
   const NAV_GROUPS = [
-    { group: null, items: [{ id: "dashboard", label: "Bảng tin", icon: "🚉" }] },
+    { group: null, items: [
+      { id: "dashboard", label: "Bảng tin", icon: "🚉" },
+      { id: "smart-review", label: "Ôn tập thông minh", icon: "🎯" },
+    ] },
     {
       group: "TỪ VỰNG",
       items: [
         { id: "flashcards", label: "Thẻ từ", icon: "🃏" },
-        { id: "quiz", label: "Đố vui", icon: "🎯" },
+        { id: "quiz", label: "Đố vui", icon: "🎲" },
         { id: "matching", label: "Nối từ", icon: "🧩" },
         { id: "speedtype", label: "Gõ nhanh", icon: "⚡" },
+        { id: "dictee", label: "Dictée (nghe chép)", icon: "🎧" },
+        { id: "dialogue", label: "Hội thoại tình huống", icon: "💬" },
         { id: "learned", label: "Đã học", icon: "📗" },
         { id: "vocab", label: "Từ điển", icon: "📚" },
         { id: "discover", label: "Khám phá", icon: "🔭" },
@@ -21,6 +26,8 @@
       items: [
         { id: "conjugation", label: "Chia động từ", icon: "🔤" },
         { id: "grammar", label: "Ngữ pháp", icon: "📖" },
+        { id: "analyzer", label: "Phân tích câu", icon: "🔬" },
+        { id: "reading", label: "Đọc hiểu", icon: "📰" },
       ],
     },
     {
@@ -32,17 +39,23 @@
     },
   ];
   const NAV_ITEMS = NAV_GROUPS.flatMap((g) => g.items);
+  window.APP_NAV_ITEMS = NAV_ITEMS; // dùng cho Command Palette
 
   const MODULES = {
+    "smart-review": window.SmartReview,
     flashcards: window.FlashcardsGame,
     quiz: window.QuizGame,
     matching: window.MatchingGame,
     speedtype: window.SpeedTypeGame,
+    dictee: window.DicteeGame,
+    dialogue: window.DialogueGame,
     learned: window.LearnedWords,
     conjugation: window.ConjugationGame,
     vocab: window.VocabBrowser,
     discover: window.DiscoverVocab,
     grammar: window.GrammarModule,
+    analyzer: window.SentenceAnalyzer,
+    reading: window.ReadingPractice,
     focus: window.FocusMode,
     settings: window.SettingsPage,
   };
@@ -88,6 +101,15 @@
   // Cho phép các module con điều hướng chương trình (vd nút "Ôn ngay" ở mục
   // Đã học nhảy sang Thẻ từ) mà không cần import trực tiếp lẫn nhau.
   window.addEventListener("app:navigate", (e) => navigateTo(e.detail));
+  window.appNavigateTo = navigateTo; // dùng cho Command Palette
+
+  // Command Palette: Ctrl+K (Windows/Linux) hoặc Cmd+K (Mac)
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      window.CommandPalette.toggle();
+    }
+  });
 
   function computeStreak(focusLog) {
     let streak = 0;
@@ -139,6 +161,7 @@
             <div class="xp-label">${progress.xpIntoLevel}/${progress.xpForLevel} XP</div>
           </div>
           <div class="xp-title">${title}</div>
+          <button class="btn btn-primary btn-large sr-hero-cta" id="dash-smart-review">🎯 Ôn tập thông minh hôm nay</button>
         </div>
 
 
@@ -190,7 +213,7 @@
             <span>Ôn thẻ từ${dueNow > 0 ? ` (${dueNow} từ đến hạn)` : ""}</span>
           </button>
           <button class="launch-card" data-nav="quiz">
-            <span class="launch-icon">🎯</span>
+            <span class="launch-icon">🎲</span>
             <span>Đố vui nhanh</span>
           </button>
           <button class="launch-card" data-nav="matching">
@@ -200,6 +223,14 @@
           <button class="launch-card" data-nav="speedtype">
             <span class="launch-icon">⚡</span>
             <span>Gõ nhanh</span>
+          </button>
+          <button class="launch-card" data-nav="dictee">
+            <span class="launch-icon">🎧</span>
+            <span>Dictée nghe chép</span>
+          </button>
+          <button class="launch-card" data-nav="dialogue">
+            <span class="launch-icon">💬</span>
+            <span>Hội thoại tình huống</span>
           </button>
           <button class="launch-card" data-nav="learned">
             <span class="launch-icon">📗</span>
@@ -220,6 +251,7 @@
     container.querySelectorAll(".launch-card").forEach((btn) => {
       btn.addEventListener("click", () => navigateTo(btn.dataset.nav));
     });
+    container.querySelector("#dash-smart-review").addEventListener("click", () => navigateTo("smart-review"));
   }
 
   async function checkLevelUp(currentLevel) {
@@ -231,9 +263,21 @@
     }
   }
 
+  // Áp dụng giao diện Sáng/Tối và cỡ chữ — dùng chung ở cả lúc khởi động app
+  // lẫn khi người dùng đổi trong Cài đặt (áp dụng ngay, không cần tải lại).
+  window.applyTheme = function (theme) {
+    document.documentElement.dataset.theme = theme === "light" ? "light" : "dark";
+  };
+  window.applyFontScale = function (scale) {
+    document.body.style.zoom = (scale || 100) / 100;
+  };
+
   document.addEventListener("DOMContentLoaded", async () => {
-    const settings = await Store.get("settings", { soundEnabled: true });
+    document.getElementById("search-hint-btn").addEventListener("click", () => window.CommandPalette.open());
+    const settings = await Store.get("settings", { soundEnabled: true, theme: "dark", fontScale: 100 });
     window.SoundFX.setEnabled(settings.soundEnabled !== false);
+    window.applyTheme(settings.theme || "dark");
+    window.applyFontScale(settings.fontScale || 100);
     buildSidebar();
     await navigateTo("dashboard");
     window.Onboarding.maybeShow();

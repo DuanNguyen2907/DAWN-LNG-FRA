@@ -60,8 +60,30 @@ window.GrammarExercises = (function () {
     return { type: "negation", prompt: `Chuyển sang câu phủ định: "${affirmative}"`, answer, fullSentence, verb };
   }
 
+  function generateAdjectiveAgreementExercise() {
+    const noun = randomFrom(window.GENDERED_NOUNS);
+    const adj = randomFrom(window.AGREEMENT_ADJECTIVES);
+    const article = window.ARTICLE_RULES.definite[noun.gender];
+    const correctForm = noun.gender === "f" ? adj.fem : adj.base;
+    const prompt = `Hoàn thành câu: "${article.charAt(0).toUpperCase() + article.slice(1)} ${noun.fr} est ___ (${adj.base})." (${noun.vi} thì ${adj.vi})`;
+    const fullSentence = `${article.charAt(0).toUpperCase() + article.slice(1)} ${noun.fr} est ${correctForm}.`;
+    return { type: "adjective-agreement", prompt, answer: correctForm, fullSentence };
+  }
+
+  function generateArticleExercise() {
+    const noun = randomFrom(window.GENDERED_NOUNS);
+    const useDefinite = Math.random() < 0.5;
+    const correctArticle = useDefinite ? window.ARTICLE_RULES.definite[noun.gender] : window.ARTICLE_RULES.indefinite[noun.gender];
+    const kindLabel = useDefinite ? "xác định (the)" : "không xác định (a/an)";
+    const prompt = `Điền mạo từ ${kindLabel} đúng cho từ: ___ ${noun.fr} (${noun.vi})`;
+    const fullSentence = `${correctArticle} ${noun.fr}`;
+    return { type: "article", prompt, answer: correctArticle, fullSentence };
+  }
+
   function generate(exerciseType, level) {
     if (exerciseType === "negation") return generateNegationExercise(level);
+    if (exerciseType === "adjective-agreement") return generateAdjectiveAgreementExercise();
+    if (exerciseType === "article") return generateArticleExercise();
     return generateTenseExercise(exerciseType, level);
   }
 
