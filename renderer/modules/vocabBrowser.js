@@ -2,7 +2,7 @@
 // Nghĩa tiếng Việt + ví dụ được tải lười (lazy) qua Enrichment khi từ xuất
 // hiện trong danh sách lọc hiện tại, có cache và cho sửa tay.
 window.VocabBrowser = (function () {
-  let state = { level: "all", category: "all", search: "" };
+  let state = { level: "all", category: "all", search: "", page: 1, pageSize: 20 };
 
   function render(container) {
     const categories = window.CATEGORIES;
@@ -19,27 +19,50 @@ window.VocabBrowser = (function () {
           <option value="A2">A2 - Sơ cấp</option>
           <option value="B1">B1 - Trung cấp</option>
           <option value="B2">B2 - Nâng cao</option>
+          <option value="C1">C1 - Thành thạo</option>
+          <option value="C2">C2 - Xuất sắc</option>
         </select>
         <select id="vb-category" class="level-select">
           <option value="all">Tất cả chủ đề</option>
           ${categories.map((c) => `<option value="${c}">${c}</option>`).join("")}
         </select>
+        <label class="vb-pagesize-label">
+          Hiển thị
+          <select id="vb-pagesize" class="level-select">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          / trang
+        </label>
       </div>
       <div id="vb-count" class="game-sub"></div>
       <div id="vb-list" class="vocab-list"></div>
+      <div id="vb-pagination" class="pagination-bar"></div>
     `;
 
     container.querySelector("#vb-search").addEventListener("input", (e) => {
       state.search = e.target.value.toLowerCase();
+      state.page = 1;
       renderList(container);
     });
     container.querySelector("#vb-search").focus();
     container.querySelector("#vb-level").addEventListener("change", (e) => {
       state.level = e.target.value;
+      state.page = 1;
       renderList(container);
     });
     container.querySelector("#vb-category").addEventListener("change", (e) => {
       state.category = e.target.value;
+      state.page = 1;
+      renderList(container);
+    });
+    const pageSizeSelect = container.querySelector("#vb-pagesize");
+    pageSizeSelect.value = String(state.pageSize);
+    pageSizeSelect.addEventListener("change", (e) => {
+      state.pageSize = Number(e.target.value);
+      state.page = 1;
       renderList(container);
     });
 
@@ -57,16 +80,25 @@ window.VocabBrowser = (function () {
 
     const countEl = container.querySelector("#vb-count");
     const isViSearch = !!state.search;
-    countEl.textContent = isViSearch ? `Đang lọc theo nghĩa...` : `${list.length} từ`;
     const listEl = container.querySelector("#vb-list");
+    const paginationEl = container.querySelector("#vb-pagination");
 
     if (list.length === 0) {
+      countEl.textContent = "0 từ";
       listEl.innerHTML = `<div class="empty-state">Không tìm thấy từ nào phù hợp.</div>`;
+      paginationEl.innerHTML = "";
       return;
     }
 
-    // Giới hạn hiển thị/tải cùng lúc để không spam API — cuộn để tải thêm.
-    const visible = list.slice(0, 40);
+    const totalPages = Math.max(1, Math.ceil(list.length / state.pageSize));
+    if (state.page > totalPages) state.page = totalPages;
+    const startIdx = (state.page - 1) * state.pageSize;
+    const visible = list.slice(startIdx, startIdx + state.pageSize);
+
+    countEl.textContent = isViSearch
+      ? `Đang lọc theo nghĩa...`
+      : `${list.length} từ — trang ${state.page}/${totalPages}`;
+
     listEl.innerHTML = visible
       .map(
         (w) => `
@@ -87,20 +119,26 @@ window.VocabBrowser = (function () {
       )
       .join("");
 
-    if (list.length > 40) {
-      listEl.insertAdjacentHTML(
-        "beforeend",
-        `<div class="game-sub">Đang hiển thị 40/${list.length} từ — thu hẹp bằng bộ lọc hoặc ô tìm kiếm để xem các từ khác.</div>`
-      );
-    }
+    renderPagination(container, list.length, totalPages);
 
     listEl.querySelectorAll('button[data-action="speak"]').forEach((btn) => {
-      btn.addEventListener("click", () => DictAPI.pronounce(btn.dataset.word));
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        DictAPI.pronounce(btn.dataset.word);
+      });
     });
     listEl.querySelectorAll('button[data-action="edit"]').forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
         const word = visible.find((w) => String(w.id) === btn.dataset.id);
         openEditRow(container, word);
+      });
+    });
+    listEl.querySelectorAll(".vocab-row").forEach((row) => {
+      row.addEventListener("click", (e) => {
+        if (e.target.closest(".fc-edit-form") || e.target.closest(".vocab-row-actions")) return;
+        const word = visible.find((w) => String(w.id) === row.dataset.id);
+        if (word) window.WordDetailModal.open(word);
       });
     });
 
@@ -111,8 +149,56 @@ window.VocabBrowser = (function () {
     if (isViSearch) {
       const visibleCount = listEl.querySelectorAll('.vocab-row:not([style*="display: none"])').length;
       const countElAfter = container.querySelector("#vb-count");
-      if (countElAfter) countElAfter.textContent = `${visibleCount} từ`;
+      if (countElAfter) countElAfter.textContent = `${visibleCount} từ trên trang này (trang ${state.page}/${totalPages})`;
     }
+  }
+
+  function renderPagination(container, totalItems, totalPages) {
+    const paginationEl = container.querySelector("#vb-pagination");
+    if (totalPages <= 1) {
+      paginationEl.innerHTML = "";
+      return;
+    }
+
+    // Hiện tối đa 5 số trang xung quanh trang hiện tại, kèm nút đầu/cuối khi cần
+    const page = state.page;
+    const pages = [];
+    const windowSize = 2;
+    for (let p = Math.max(1, page - windowSize); p <= Math.min(totalPages, page + windowSize); p++) {
+      pages.push(p);
+    }
+
+    paginationEl.innerHTML = `
+      <button class="pagination-btn" id="vb-page-prev" ${page === 1 ? "disabled" : ""}>‹ Trước</button>
+      ${page > windowSize + 1 ? `<button class="pagination-btn" data-page="1">1</button>${page > windowSize + 2 ? '<span class="pagination-ellipsis">…</span>' : ""}` : ""}
+      ${pages.map((p) => `<button class="pagination-btn ${p === page ? "active" : ""}" data-page="${p}">${p}</button>`).join("")}
+      ${page < totalPages - windowSize ? `${page < totalPages - windowSize - 1 ? '<span class="pagination-ellipsis">…</span>' : ""}<button class="pagination-btn" data-page="${totalPages}">${totalPages}</button>` : ""}
+      <button class="pagination-btn" id="vb-page-next" ${page === totalPages ? "disabled" : ""}>Sau ›</button>
+    `;
+
+    paginationEl.querySelectorAll("[data-page]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.page = Number(btn.dataset.page);
+        renderList(container);
+        container.querySelector("#vb-list").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+    const prevBtn = paginationEl.querySelector("#vb-page-prev");
+    const nextBtn = paginationEl.querySelector("#vb-page-next");
+    if (prevBtn) prevBtn.addEventListener("click", () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        renderList(container);
+        container.querySelector("#vb-list").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+    if (nextBtn) nextBtn.addEventListener("click", () => {
+      if (state.page < totalPages) {
+        state.page += 1;
+        renderList(container);
+        container.querySelector("#vb-list").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
   }
 
   async function loadRowImage(container, word) {

@@ -31,6 +31,8 @@ window.MatchingGame = (function () {
           <option value="A2">A2</option>
           <option value="B1">B1</option>
           <option value="B2">B2</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
         </select>
       </div>
       <p class="game-sub">Kéo mỗi từ tiếng Pháp bên trái, thả vào đúng nghĩa tiếng Việt bên phải.</p>

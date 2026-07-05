@@ -52,11 +52,32 @@ window.DictAPI = (function () {
       const audio =
         entry?.phonetics?.find((p) => p.audio)?.audio || null;
       const phonetic = entry?.phonetic || entry?.phonetics?.[0]?.text || null;
-      const result = { audio, phonetic };
+
+      // Free Dictionary API đôi khi có sẵn từ đồng nghĩa/trái nghĩa (ở cấp
+      // nghĩa hoặc cấp định nghĩa) — gom lại, bỏ trùng, dùng cho thẻ chi tiết.
+      const partOfSpeech = entry?.meanings?.[0]?.partOfSpeech || null;
+      const synonyms = new Set();
+      const antonyms = new Set();
+      (entry?.meanings || []).forEach((m) => {
+        (m.synonyms || []).forEach((s) => synonyms.add(s));
+        (m.antonyms || []).forEach((a) => antonyms.add(a));
+        (m.definitions || []).forEach((d) => {
+          (d.synonyms || []).forEach((s) => synonyms.add(s));
+          (d.antonyms || []).forEach((a) => antonyms.add(a));
+        });
+      });
+
+      const result = {
+        audio,
+        phonetic,
+        partOfSpeech,
+        synonyms: Array.from(synonyms).slice(0, 6),
+        antonyms: Array.from(antonyms).slice(0, 6),
+      };
       CACHE[key] = result;
       return result;
     } catch (e) {
-      const result = { audio: null, phonetic: null };
+      const result = { audio: null, phonetic: null, partOfSpeech: null, synonyms: [], antonyms: [] };
       CACHE[key] = result;
       return result;
     }

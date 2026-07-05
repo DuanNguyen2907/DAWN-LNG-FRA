@@ -33,6 +33,8 @@ window.QuizGame = (function () {
             <option value="A2">A2</option>
             <option value="B1">B1</option>
             <option value="B2">B2</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
           </select>
           <select id="qz-mode" class="level-select">
             <option value="read">👁️ Nhìn chữ đoán nghĩa</option>

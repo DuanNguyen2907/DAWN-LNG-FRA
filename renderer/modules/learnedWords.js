@@ -34,6 +34,8 @@ window.LearnedWords = (function () {
           <option value="A2">A2</option>
           <option value="B1">B1</option>
           <option value="B2">B2</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
         </select>
         <select id="lw-sort" class="level-select">
           <option value="recent">Ôn gần đây nhất</option>

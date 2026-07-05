@@ -37,6 +37,8 @@ window.FlashcardsGame = (function () {
           <option value="A2">A2 - Sơ cấp</option>
           <option value="B1">B1 - Trung cấp</option>
           <option value="B2">B2 - Nâng cao</option>
+          <option value="C1">C1 - Thành thạo</option>
+          <option value="C2">C2 - Xuất sắc</option>
         </select>
       </div>
       <p class="game-sub">Nhấn vào thẻ để lật, rồi tự đánh giá mức độ nhớ của bạn. Nghĩa được lấy tự động qua API — nếu thấy dịch sai, bấm ✏️ để sửa lại.</p>

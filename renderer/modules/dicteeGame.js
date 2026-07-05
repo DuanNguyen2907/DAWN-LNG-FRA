@@ -32,6 +32,8 @@ window.DicteeGame = (function () {
           <option value="A2">A2</option>
           <option value="B1">B1</option>
           <option value="B2">B2</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
         </select>
       </div>
       <p class="game-sub">Bấm 🔊 để nghe câu, gõ lại chính xác những gì bạn nghe được. Có thể nghe lại nhiều lần.</p>

@@ -152,6 +152,29 @@ hoặc muốn tìm từ theo chủ đề cụ thể không có sẵn.
 - **Giao diện Sáng/Tối + cỡ chữ tuỳ chỉnh**: đổi trong Cài đặt, áp dụng ngay lập tức.
 - **Command Palette (Ctrl+K)**: tìm kiếm xuyên suốt toàn app — mục điều hướng, từ vựng, chủ điểm ngữ pháp, động từ, chủ đề khám phá.
 
+## Ngữ pháp — overhaul trực quan hoá (tham khảo Duolingo, Kwiziq, Babbel)
+
+Sau khi tìm hiểu cách các app lớn dạy ngữ pháp, mình làm lại toàn bộ mục Ngữ pháp:
+
+- **Tô màu vai trò ngữ pháp xuyên suốt app** (kiểu Duolingo): chủ ngữ/động từ/mạo từ/danh từ/tính từ/phủ định luôn cùng 1 màu ở mọi nơi — Ngữ pháp, Phân tích câu, bài tập. Nhìn màu quen dần thay vì phải nhớ quy tắc.
+- **Huy hiệu giống đực/cái nhất quán**: ♂ xanh dương / ♀ hồng, xuất hiện ở Phân tích câu và bài tập mạo từ/tính từ.
+- **Dòng thời gian trực quan cho các thì**: sơ đồ ngang cho Passé composé / Imparfait / Futur so với "hiện tại" — giải quyết trực tiếp điểm hay nhầm nhất (imparfait vs passé composé).
+- **Kéo-thả sắp xếp câu** (bài tập đặc trưng của Duolingo): xáo trộn từ trong 1 câu ví dụ, kéo hoặc bấm chọn để ghép lại đúng thứ tự.
+- **Nội dung mỗi chủ điểm mở rộng đầy đủ**: Công thức, Nghĩa, Giải thích + Lưu ý, **4 ví dụ** (tăng từ 3), **Chủ điểm liên quan** (≈ tương đồng / ⇄ đối lập, bấm để nhảy qua), và **phần luyện viết 4 câu** (có thể bỏ qua, không chấm điểm tự động vì không có cách kiểm tra ngữ pháp tự do đáng tin cậy — đây là chỗ để tự luyện diễn đạt).
+- **Sắp xếp lại theo chủ đề** thay vì chỉ theo cấp độ: Danh từ & Mạo từ · Đại từ · Tính từ & Trạng từ · Động từ & Thì · Câu & Giới từ — mỗi chủ điểm vẫn có nhãn cấp độ A1-B2 riêng.
+
+## Widget Pomodoro nổi (mới)
+
+Khi bấm "Bắt đầu" ở Tập trung rồi chuyển sang mục khác, một widget nhỏ hiện
+ở góc phải trên màn hình, hiển thị thời gian đang đếm — không cần quay lại
+tab Tập trung để biết còn bao lâu:
+- **Icon đồng hồ cà chua** khi đang trong phiên học, **icon đồng hồ có
+  trăng lưỡi liềm** (biểu tượng nghỉ ngơi) khi đang giờ nghỉ.
+- **Kéo thả được** để tránh đè lên nội dung khác — vị trí được nhớ lại cho
+  lần sau.
+- Bấm vào widget để nhảy thẳng về trang Tập trung.
+- Chỉ hiện sau khi đã bấm "Bắt đầu" ít nhất 1 lần.
+
 ## Tính năng
 
 **Học từ vựng:**

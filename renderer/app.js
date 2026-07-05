@@ -86,6 +86,7 @@
   }
 
   async function navigateTo(id) {
+    const leavingFocus = current === "focus" && id !== "focus";
     current = id;
     document.querySelectorAll(".metro-station").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.id === id);
@@ -95,6 +96,16 @@
       await renderDashboard(content);
     } else if (MODULES[id]) {
       await MODULES[id].render(content);
+    }
+
+    // Widget Pomodoro nổi: chỉ hiện khi rời trang Tập trung MÀ vẫn có phiên
+    // đang chạy/tạm dừng dở — tránh hiện thừa khi chưa từng bấm bắt đầu.
+    if (leavingFocus && window.FocusMode) {
+      const state = window.FocusMode.getState();
+      if (state.hasStartedOnce) {
+        window.PomodoroWidget.update(state.phase, state.remainingSeconds);
+        window.PomodoroWidget.show();
+      }
     }
   }
 

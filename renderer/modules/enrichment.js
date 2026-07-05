@@ -56,7 +56,7 @@ window.Enrichment = (function () {
 
   async function fetchFresh(word) {
     const [dict, viRaw, exampleFr] = await Promise.all([
-      window.DictAPI.lookup(word).catch(() => ({ phonetic: null, audio: null })),
+      window.DictAPI.lookup(word).catch(() => ({ phonetic: null, audio: null, partOfSpeech: null, synonyms: [], antonyms: [] })),
       translate(word, "fr|vi").catch(() => null),
       fetchExampleSentence(word).catch(() => null),
     ]);
@@ -76,6 +76,9 @@ window.Enrichment = (function () {
       exampleError: !exampleFr,
       phonetic: dict.phonetic || null,
       audio: dict.audio || null,
+      partOfSpeech: dict.partOfSpeech || null,
+      synonyms: dict.synonyms || [],
+      antonyms: dict.antonyms || [],
       fetchedAt: Date.now(),
     };
   }

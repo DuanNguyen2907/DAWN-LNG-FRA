@@ -89,22 +89,43 @@ window.DiscoverVocab = (function () {
       .map(
         (term, i) => `
         <div class="vocab-row" data-idx="${i}">
+          <div class="vocab-row-thumb" id="disc-thumb-${slug}-${i}"></div>
           <div class="vocab-row-main">
             <div class="vocab-row-fr">${term}</div>
             <div class="vocab-row-meaning" id="disc-meaning-${slug}-${i}"><span class="skeleton-row" style="width:120px;display:inline-block;"></span></div>
             <div class="vocab-row-example" id="disc-example-${slug}-${i}"></div>
           </div>
-          <button class="btn-icon" data-word="${term.replace(/"/g, "&quot;")}" title="Nghe phát âm">🔊</button>
+          <div class="vocab-row-actions">
+            <button class="btn-icon" data-action="speak" data-word="${term.replace(/"/g, "&quot;")}" title="Nghe phát âm">🔊</button>
+            <button class="btn-icon" data-action="edit" data-idx="${i}" title="Sửa nghĩa">✏️</button>
+          </div>
         </div>
       `
       )
       .join("");
 
-    listEl.querySelectorAll("button[data-word]").forEach((btn) => {
-      btn.addEventListener("click", () => DictAPI.pronounce(btn.dataset.word));
+    listEl.querySelectorAll('button[data-action="speak"]').forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        DictAPI.pronounce(btn.dataset.word);
+      });
+    });
+    listEl.querySelectorAll('button[data-action="edit"]').forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const term = state.members[Number(btn.dataset.idx)];
+        window.WordDetailModal.open(syntheticWord(slug, term));
+      });
+    });
+    listEl.querySelectorAll(".vocab-row").forEach((row) => {
+      row.addEventListener("click", () => {
+        const term = state.members[Number(row.dataset.idx)];
+        window.WordDetailModal.open(syntheticWord(slug, term));
+      });
     });
 
     state.members.forEach((term, i) => loadWordMeaning(slug, i, term));
+    state.members.forEach((term, i) => loadWordImage(slug, i, term));
 
     const loadMoreBtn = contentZone.querySelector("#discover-load-more-btn");
     if (loadMoreBtn) {
@@ -128,11 +149,14 @@ window.DiscoverVocab = (function () {
     }
   }
 
+  function syntheticWord(slug, term) {
+    return { id: `wikt_${slug}_${term}`, fr: term };
+  }
+
   async function loadWordMeaning(slug, index, term) {
     // Dùng lại toàn bộ hạ tầng Enrichment (dịch, ví dụ, audio, cache) như từ vựng cốt lõi,
     // chỉ khác là id dạng chuỗi để không đụng ID số của bộ từ đã phân cấp độ.
-    const syntheticWord = { id: `wikt_${slug}_${term}`, fr: term };
-    const data = await Enrichment.getForWord(syntheticWord);
+    const data = await Enrichment.getForWord(syntheticWord(slug, term));
     const meaningEl = document.getElementById(`disc-meaning-${slug}-${index}`);
     const exampleEl = document.getElementById(`disc-example-${slug}-${index}`);
     if (!meaningEl) return;
@@ -141,6 +165,16 @@ window.DiscoverVocab = (function () {
       : `<span class="fc-error">Không dịch được</span>`;
     if (exampleEl && data.exampleFr) {
       exampleEl.innerHTML = `${data.exampleFr} <span class="muted">— ${data.exampleVi || ""}</span>`;
+    }
+  }
+
+  async function loadWordImage(slug, index, term) {
+    const thumbEl = document.getElementById(`disc-thumb-${slug}-${index}`);
+    if (!thumbEl) return;
+    const image = await Enrichment.getImage(syntheticWord(slug, term)).catch(() => null);
+    if (!thumbEl.isConnected) return;
+    if (image && image.url) {
+      thumbEl.innerHTML = `<img src="${image.url}" alt="${term}" loading="lazy" title="Ảnh: ${image.creator || ""} (${image.license || ""})" />`;
     }
   }
 

@@ -296,6 +296,8 @@ html, body {
 .badge-A2 { background: rgba(255,201,60,0.2); color: var(--gold); }
 .badge-B1 { background: rgba(231,111,81,0.2); color: var(--coral); }
 .badge-B2 { background: rgba(136,145,168,0.25); color: var(--chalk); }
+.badge-C1 { background: rgba(155,109,255,0.22); color: #9B6DFF; }
+.badge-C2 { background: rgba(255,90,150,0.22); color: #FF5A96; }
 
 /* ===== Flashcards ===== */
 .progress-text { color: var(--slate); font-family: var(--font-mono); font-size: 12.5px; margin-bottom: 16px; }
@@ -568,35 +570,82 @@ html, body {
 .vocab-row-main { position: relative; }
 
 /* ===== Grammar page ===== */
+/* ----- Thanh chủ đề dạng tab ngang, cuộn được ----- */
+.grammar-category-tabs-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.grammar-category-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  flex: 1;
+}
+.grammar-category-tabs::-webkit-scrollbar { display: none; }
+.grammar-cat-tab {
+  flex-shrink: 0;
+  background: var(--ink-soft);
+  border: 1.5px solid var(--ink-softer);
+  color: var(--chalk-dim);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+}
+.grammar-cat-tab:hover { border-color: var(--gold); color: var(--chalk); }
+.grammar-cat-tab.active { background: rgba(255,201,60,0.16); border-color: var(--gold); color: var(--chalk); }
+.grammar-tab-arrow {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  border: 1px solid var(--ink-softer);
+  color: var(--chalk-dim);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.grammar-tab-arrow:hover { border-color: var(--gold); color: var(--chalk); }
+
+/* ----- Danh sách chủ điểm (chỉ hiện chủ đề đang chọn) — khung viền rõ ----- */
 .grammar-layout { display: flex; gap: 28px; align-items: flex-start; }
 .grammar-topics {
   width: 250px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  max-height: 640px;
+  overflow-y: auto;
+  padding-right: 6px;
 }
-.grammar-level-group { margin-bottom: 14px; }
-.grammar-level-title {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: var(--slate);
-  margin: 0 0 6px 6px;
-}
+.grammar-topics::-webkit-scrollbar { width: 6px; }
+.grammar-topics::-webkit-scrollbar-thumb { background: var(--ink-softer); border-radius: 6px; }
 .grammar-topic-btn {
   text-align: left;
   background: var(--ink-soft);
-  border: 1px solid transparent;
+  border: 1.5px solid var(--ink-softer);
   color: var(--chalk-dim);
-  padding: 10px 12px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
   font-size: 13px;
   cursor: pointer;
-  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: all 0.12s ease;
 }
-.grammar-topic-btn:hover { border-color: var(--ink-softer); color: var(--chalk); }
+.grammar-topic-btn:hover { border-color: var(--gold); color: var(--chalk); }
 .grammar-topic-btn.active { background: rgba(255,201,60,0.15); border-color: var(--gold); color: var(--chalk); }
 
 .grammar-content { flex: 1; min-width: 0; }
@@ -840,13 +889,7 @@ html, body {
 .sa-token { padding: 10px 14px; border-radius: 10px; text-align: center; border: 2px solid transparent; }
 .sa-token-word { font-weight: 700; font-size: 15px; }
 .sa-token-label { font-size: 10.5px; margin-top: 3px; opacity: 0.85; }
-.sa-tag-pronoun { background: rgba(255,201,60,0.18); border-color: rgba(255,201,60,0.4); }
-.sa-tag-verb { background: rgba(231,111,81,0.18); border-color: rgba(231,111,81,0.4); }
-.sa-tag-article { background: rgba(136,145,168,0.18); border-color: rgba(136,145,168,0.4); }
-.sa-tag-noun { background: rgba(42,157,143,0.18); border-color: rgba(42,157,143,0.4); }
-.sa-tag-adjective { background: rgba(100,149,237,0.18); border-color: rgba(100,149,237,0.4); }
-.sa-tag-negation { background: rgba(200,80,80,0.18); border-color: rgba(200,80,80,0.4); }
-.sa-tag-unknown { background: var(--ink-softer); opacity: 0.6; }
+
 .sa-details { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; color: var(--chalk-dim); }
 .sa-detail-row b { color: var(--chalk); }
 
@@ -862,15 +905,189 @@ html, body {
   font-size: 14px;
   min-height: 20px;
 }
+.reading-article-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.reading-article-chip { font-size: 12.5px; }
+
+/* =====================================================================
+   NGỮ PHÁP TRỰC QUAN — hệ màu vai trò, huy hiệu giống, công thức, timeline,
+   chủ điểm liên quan, kéo-thả sắp câu, luyện viết
+   ===================================================================== */
+.grammar-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.grammar-legend .gram-hl { cursor: default; }
+
+/* Tô màu vai trò ngữ pháp — dùng nhất quán ở Ngữ pháp, Phân tích câu, ví dụ */
+.gram-hl { padding: 2px 6px; border-radius: 5px; font-weight: 700; }
+.gram-hl-pronoun { background: rgba(255,201,60,0.22); color: var(--gold); }
+.gram-hl-verb { background: rgba(231,111,81,0.22); color: var(--coral); }
+.gram-hl-article { background: rgba(136,145,168,0.25); color: var(--slate); }
+.gram-hl-noun { background: rgba(42,157,143,0.22); color: var(--teal); }
+.gram-hl-adjective { background: rgba(100,149,237,0.22); color: #6495ED; }
+.gram-hl-negation { background: rgba(200,80,80,0.22); color: #C85050; }
+.gram-hl-other { background: rgba(255,255,255,0.12); color: var(--chalk); }
+
+/* Biến thể "khối" (box) của cùng bảng màu trên — dùng cho thẻ token ở Phân tích câu */
+.gram-hl-bg-pronoun { background: rgba(255,201,60,0.18); border: 2px solid rgba(255,201,60,0.4); }
+.gram-hl-bg-verb { background: rgba(231,111,81,0.18); border: 2px solid rgba(231,111,81,0.4); }
+.gram-hl-bg-article { background: rgba(136,145,168,0.18); border: 2px solid rgba(136,145,168,0.4); }
+.gram-hl-bg-noun { background: rgba(42,157,143,0.18); border: 2px solid rgba(42,157,143,0.4); }
+.gram-hl-bg-adjective { background: rgba(100,149,237,0.18); border: 2px solid rgba(100,149,237,0.4); }
+.gram-hl-bg-negation { background: rgba(200,80,80,0.18); border: 2px solid rgba(200,80,80,0.4); }
+.gram-hl-bg-other { background: var(--ink-softer); border: 2px solid transparent; opacity: 0.7; }
+
+/* Huy hiệu giống đực/cái — nhất quán xanh dương/hồng theo quy ước phổ biến trong sách dạy tiếng Pháp */
+.gender-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+.gender-m { background: rgba(91,141,239,0.2); color: #5B8DEF; }
+.gender-f { background: rgba(232,93,154,0.2); color: #E85D9A; }
+
+/* Công thức */
+.formula-box {
+  background: linear-gradient(135deg, rgba(255,201,60,0.12), rgba(255,201,60,0.04));
+  border: 1px solid rgba(255,201,60,0.3);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 14px 0 16px;
+}
+.formula-label { font-family: var(--font-mono-safe); font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.formula-text { font-family: var(--font-mono-safe); font-size: 15px; font-weight: 700; color: var(--chalk); }
+.grammar-meaning { font-size: 14.5px; margin: 0 0 10px; }
+
+/* Chủ điểm liên quan */
+.related-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.related-chip { font-size: 12px; }
+.related-chip-opposite { border-color: rgba(231,111,81,0.4) !important; }
+
+/* Dòng thời gian thì */
+.tense-timeline-svg { display: block; margin: 6px auto 10px; }
+
+/* Sắp xếp câu (kéo-thả) */
+.grammar-practice-block, .grammar-writing-block { border-top: 1px dashed var(--ink-softer); padding-top: 20px; margin-top: 24px; }
+.practice-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.so-target {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 52px;
+  padding: 10px;
+  background: var(--ink-softer);
+  border-radius: 10px;
+  margin: 14px 0 10px;
+  border: 2px dashed transparent;
+}
+.so-slot { min-width: 46px; min-height: 36px; display: flex; align-items: center; }
+.so-bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
+.so-word-chip {
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+}
+.so-word-chip.so-placed { background: var(--teal); color: var(--white); }
+.so-actions { display: flex; gap: 10px; margin: 16px 0 10px; }
+
+/* Luyện viết */
+.writing-input { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
 
 /* ===== Card / row illustration images ===== */
 .fc-image { min-height: 0; margin-bottom: 6px; }
 .fc-image img { max-width: 140px; max-height: 100px; border-radius: 10px; object-fit: cover; }
 .vocab-row-thumb { width: 44px; height: 44px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: var(--ink-softer); }
 .vocab-row-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vocab-row { cursor: pointer; }
+.vocab-row:hover { background: var(--ink-softer); }
+
+.vb-pagesize-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--chalk-dim);
+  white-space: nowrap;
+}
+.vb-pagesize-label .level-select { padding: 9px 10px; }
+
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.pagination-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: var(--ink-soft);
+  border: 1.5px solid var(--ink-softer);
+  color: var(--chalk-dim);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.pagination-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--chalk); }
+.pagination-btn.active { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+.pagination-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.pagination-ellipsis { color: var(--slate); padding: 0 4px; }
+
+/* ===== Thẻ chi tiết từ vựng (modal) ===== */
+.modal-card.word-detail-card { max-width: 480px; position: relative; text-align: left; }
+.word-detail-close { position: absolute; top: 14px; right: 14px; }
+.word-detail-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-right: 30px; }
+.word-detail-image { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+.word-detail-word { font-family: var(--font-display); font-weight: 800; font-size: 24px; }
+.word-detail-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.word-detail-pos { font-size: 11.5px; color: var(--slate); font-style: italic; }
+.word-detail-phonetic { font-family: var(--font-mono-safe); font-size: 12.5px; color: var(--gold); }
+.word-detail-section { margin-bottom: 16px; }
+.word-detail-label { font-family: var(--font-mono-safe); font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--slate); margin-bottom: 6px; }
+.word-detail-meaning { font-size: 15px; font-weight: 600; color: var(--gold); }
+.word-detail-syn-ant { display: flex; flex-direction: column; gap: 12px; }
 
 /* ===== Pomodoro phase label ===== */
 .pomodoro-phase-label { text-align: center; font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--gold); margin-top: 10px; }
+
+/* ===== Widget Pomodoro nổi (hiện khi rời trang Tập trung) ===== */
+.pomodoro-widget {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  left: auto;
+  z-index: 250;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink-soft);
+  border: 1.5px solid var(--ink-softer);
+  border-radius: 14px;
+  padding: 8px 14px 8px 10px;
+  box-shadow: var(--shadow);
+  cursor: grab;
+  user-select: none;
+  opacity: 0;
+  transform: scale(0.9) translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.3s ease;
+}
+.pomodoro-widget.pomodoro-widget-visible { display: flex; opacity: 1; transform: scale(1) translateY(0); }
+.pomodoro-widget.pomodoro-widget-dragging { cursor: grabbing; transition: none; }
+.pomodoro-widget:hover { border-color: var(--gold); }
+.pomodoro-widget-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.pomodoro-widget-info { display: flex; flex-direction: column; line-height: 1.25; }
+.pomodoro-widget-time {
+  font-family: var(--font-mono-safe);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--chalk);
+}
+.pomodoro-widget-phase { font-size: 10.5px; color: var(--slate); }
+.pomodoro-widget-drag-hint { color: var(--slate); font-size: 12px; opacity: 0.5; margin-left: 2px; }
+.pomodoro-widget.pomodoro-widget-work { border-color: rgba(232, 93, 74, 0.45); }
+.pomodoro-widget.pomodoro-widget-break { border-color: rgba(42, 157, 143, 0.45); }
 
 /* =====================================================================
    RÀ SOÁT TRẢI NGHIỆM NGƯỜI DÙNG — các sửa lỗi/tinh chỉnh chi tiết

@@ -30,6 +30,8 @@ window.SpeedTypeGame = (function () {
           <option value="A2">A2</option>
           <option value="B1">B1</option>
           <option value="B2">B2</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
         </select>
       </div>
       <p class="game-sub">Cho nghĩa tiếng Việt — gõ đúng từ tiếng Pháp càng nhanh càng tốt. Còn 60 giây, gõ được bao nhiêu từ tuỳ bạn!</p>

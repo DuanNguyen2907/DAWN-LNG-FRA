@@ -52,6 +52,7 @@ window.FocusMode = (function () {
     if (!initialized) {
       await initFreshSession();
     }
+    window.PomodoroWidget.hide(); // đang xem trực tiếp trang Tập trung — không cần widget nổi
 
     const settings = await getSettings();
     const focusLog = await Store.get("focusLog", {});
@@ -141,6 +142,7 @@ window.FocusMode = (function () {
     remainingSeconds -= 1;
     if (phase === "work") workSecondsThisPhase += 1;
     updateDisplay(container);
+    window.PomodoroWidget.update(phase, remainingSeconds); // luôn cập nhật, kể cả khi đang ở trang khác
 
     if (remainingSeconds <= 0) {
       await onPhaseComplete(container);
@@ -162,6 +164,7 @@ window.FocusMode = (function () {
       workSecondsThisPhase = 0;
     }
     updateDisplay(container);
+    window.PomodoroWidget.update(phase, remainingSeconds);
     // Cập nhật lại các thẻ thống kê để phản ánh phiên vừa hoàn thành
     const focusLog = await Store.get("focusLog", {});
     const cycles = await Store.get("focusCycles", {});
@@ -229,5 +232,9 @@ window.FocusMode = (function () {
       .join("");
   }
 
-  return { render };
+  function getState() {
+    return { initialized, phase, remainingSeconds, running, hasStartedOnce };
+  }
+
+  return { render, getState };
 })();

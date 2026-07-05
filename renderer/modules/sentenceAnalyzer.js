@@ -62,7 +62,7 @@ window.SentenceAnalyzer = (function () {
     }
 
     const noun = lookupNoun(token);
-    if (noun) return { token, type: "noun", label: "Danh từ", detail: `${noun.vi} · Giống ${noun.gender === "m" ? "đực" : "cái"}` };
+    if (noun) return { token, type: "noun", label: "Danh từ", detail: `${noun.vi}`, gender: noun.gender };
 
     const adj = lookupAdjective(token);
     if (adj) return { token, type: "adjective", label: "Tính từ", detail: adj.vi };
@@ -121,14 +121,14 @@ window.SentenceAnalyzer = (function () {
     });
   }
 
-  const TYPE_COLORS = {
-    pronoun: "sa-tag-pronoun",
-    verb: "sa-tag-verb",
-    article: "sa-tag-article",
-    noun: "sa-tag-noun",
-    adjective: "sa-tag-adjective",
-    negation: "sa-tag-negation",
-    unknown: "sa-tag-unknown",
+  const TYPE_TO_ROLE = {
+    pronoun: "pronoun",
+    verb: "verb",
+    article: "article",
+    noun: "noun",
+    adjective: "adjective",
+    negation: "negation",
+    unknown: "other",
   };
 
   function renderResult(container, tokens) {
@@ -138,9 +138,9 @@ window.SentenceAnalyzer = (function () {
         ${tokens
           .map(
             (t) => `
-          <div class="sa-token ${TYPE_COLORS[t.type]}">
+          <div class="sa-token gram-hl-bg-${TYPE_TO_ROLE[t.type]}">
             <div class="sa-token-word">${t.token}</div>
-            <div class="sa-token-label">${t.label}</div>
+            <div class="sa-token-label">${t.label}${t.gender ? window.GrammarUtils.genderBadge(t.gender) : ""}</div>
           </div>
         `
           )

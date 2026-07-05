@@ -65,7 +65,8 @@ window.GrammarExercises = (function () {
     const adj = randomFrom(window.AGREEMENT_ADJECTIVES);
     const article = window.ARTICLE_RULES.definite[noun.gender];
     const correctForm = noun.gender === "f" ? adj.fem : adj.base;
-    const prompt = `Hoàn thành câu: "${article.charAt(0).toUpperCase() + article.slice(1)} ${noun.fr} est ___ (${adj.base})." (${noun.vi} thì ${adj.vi})`;
+    const genderBadge = window.GrammarUtils ? window.GrammarUtils.genderBadge(noun.gender) : "";
+    const prompt = `Hoàn thành câu: "${article.charAt(0).toUpperCase() + article.slice(1)} ${noun.fr} est ___ (${adj.base})." (${noun.vi}${genderBadge} thì ${adj.vi})`;
     const fullSentence = `${article.charAt(0).toUpperCase() + article.slice(1)} ${noun.fr} est ${correctForm}.`;
     return { type: "adjective-agreement", prompt, answer: correctForm, fullSentence };
   }
@@ -75,7 +76,8 @@ window.GrammarExercises = (function () {
     const useDefinite = Math.random() < 0.5;
     const correctArticle = useDefinite ? window.ARTICLE_RULES.definite[noun.gender] : window.ARTICLE_RULES.indefinite[noun.gender];
     const kindLabel = useDefinite ? "xác định (the)" : "không xác định (a/an)";
-    const prompt = `Điền mạo từ ${kindLabel} đúng cho từ: ___ ${noun.fr} (${noun.vi})`;
+    const genderBadge = window.GrammarUtils ? window.GrammarUtils.genderBadge(noun.gender) : "";
+    const prompt = `Điền mạo từ ${kindLabel} đúng cho từ: ___ ${noun.fr} (${noun.vi}${genderBadge})`;
     const fullSentence = `${correctArticle} ${noun.fr}`;
     return { type: "article", prompt, answer: correctArticle, fullSentence };
   }

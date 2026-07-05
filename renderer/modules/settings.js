@@ -1,6 +1,6 @@
 // Trang Cài đặt: mục tiêu học/ngày, bật/tắt âm thanh, xuất/nhập sao lưu, xoá tiến trình
 window.SettingsPage = (function () {
-  const BACKUP_KEYS = ["stats", "srsCards", "focusLog", "focusCycles", "vocabEnrichment", "vocabImages", "grammarUserNotes", "discoverVocabState", "wikibooksLessonCache", "weakWords", "readingTextCache", "settings"];
+  const BACKUP_KEYS = ["stats", "srsCards", "focusLog", "focusCycles", "vocabEnrichment", "vocabImages", "grammarUserNotes", "grammarWritingPractice", "discoverVocabState", "wikibooksLessonCache", "weakWords", "readingTextCache", "readingDiscoverState", "settings"];
 
   function clamp(value, min, max, fallback) {
     const n = Number(value);

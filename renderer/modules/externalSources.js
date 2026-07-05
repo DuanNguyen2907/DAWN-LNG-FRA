@@ -63,5 +63,27 @@ window.ExternalSources = (function () {
     return page.extract || null;
   }
 
-  return { fetchWiktionaryCategoryMembers, fetchWikibooksLesson, fetchWikipediaExtract };
+  // ---- Wikipedia tiếng Pháp: liệt kê bài viết trong 1 chủ đề, hỗ trợ "tải
+  // thêm" qua cmcontinue — dùng để mở rộng kho bài Đọc hiểu gần như vô hạn ----
+  async function fetchWikipediaCategoryMembers(categoryTitle, cmcontinue) {
+    const params = new URLSearchParams({
+      action: "query",
+      list: "categorymembers",
+      cmtitle: `Catégorie:${categoryTitle}`,
+      cmlimit: "20",
+      cmnamespace: "0", // chỉ lấy bài viết thật, bỏ qua trang thể loại con/thảo luận
+      format: "json",
+      origin: "*",
+    });
+    if (cmcontinue) params.set("cmcontinue", cmcontinue);
+
+    const res = await fetch(`https://fr.wikipedia.org/w/api.php?${params.toString()}`);
+    if (!res.ok) throw new Error("Lỗi Wikipedia");
+    const data = await res.json();
+    const members = (data.query?.categorymembers || []).map((m) => m.title);
+    const nextContinue = data.continue?.cmcontinue || null;
+    return { members, nextContinue };
+  }
+
+  return { fetchWiktionaryCategoryMembers, fetchWikibooksLesson, fetchWikipediaExtract, fetchWikipediaCategoryMembers };
 })();
